@@ -8,51 +8,46 @@ app = marimo.App(width="medium")
 
 # Cell 1: Import marimo as mo.
 @app.cell
-def __():
+def cell1():
     import marimo as mo
 
-    return (mo,)
+    return mo
 
 
-# Cell 2: Display a title and brief instructions.
+# Cell 2: Display instructions.
 @app.cell
-def __(mo):
+def cell2(mo):
     mo.md(
-        r"""
+        """
         # MACHINA Spaceplan LLM
 
-        Enter spaceplan objective:
+        Enter a prompt below and click **Submit** to call the `/generate_full_objective` endpoint.
         """
     )
-    return
+    # No explicit return is needed here
 
 
 # Cell 3: Create a text-area form for user input.
 @app.cell
-def __(mo):
-    # Create a text area (with placeholder text, label, and 5 rows) and wrap it in a form.
+def cell3(mo):
     return mo.ui.text_area(
-        placeholder="Enter spaceplan objective...",
-        label="Prompt",
-        rows=5,
-        full_width=True,
+        placeholder="Enter your prompt here...", label="Prompt", rows=5, full_width=True
     ).form(submit_button_label="Submit")
 
 
-# Cell 4: When the form is submitted, call the API and display its JSON response.
+# Cell 4: Process the input and call the API.
 @app.cell
-def __(input_text, mo):
+def cell4(input_text, mo):
     if not input_text:
-        return mo.md("**Enter spaceplan objective.**")
+        return mo.md("**Please enter a prompt and click Submit.**")
 
     payload = {"text": input_text}
     try:
         response = requests.post(
             "http://localhost:8888/generate_full_objective", json=payload
         )
-        response.raise_for_status()  # Raise an error for non-2xx responses.
+        response.raise_for_status()  # Raise an error for HTTP error codes.
         result = response.json()
-        # Format the JSON result inside a code block.
         formatted_result = "```json\n" + str(result) + "\n```"
         return mo.md("### API Response\n" + formatted_result)
     except Exception as e:
