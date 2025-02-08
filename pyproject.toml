@@ -13,3 +13,6 @@ dependencies = [
   "marimo==0.11.0",
   "requests"
 ]
+
+[tool.hatch.build.targets.wheel]
+include = ["main.py"]
